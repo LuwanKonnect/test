@@ -1,0 +1,1 @@
+{"version":3,"file":"message-payload.dto.js","sourceRoot":"","sources":["../../../../src/features/socket/dto/message-payload.dto.ts"],"names":[],"mappings":";;;AAAA,+CAA2C;AAC3C,6CAA2C;AAE3C,MAAa,iBAAkB,SAAQ,kBAAQ,CAAC,wBAAU,EAAE;IAC1D,IAAI;IACJ,WAAW;IACX,WAAW;CACH,CAAC;CAAG;AAJd,8CAIc"}

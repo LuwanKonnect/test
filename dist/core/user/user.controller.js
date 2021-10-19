@@ -70,7 +70,6 @@ __decorate([
     swagger_1.ApiBody({
         type: update_dto_1.UpdateDto,
     }),
-    common_1.UseGuards(guards_1.JwtAuthGuard),
     swagger_schema_1.ApiFile({ name: 'avatar' }),
     common_1.Put('update'),
     __param(0, common_1.UploadedFile()),

@@ -34,52 +34,6 @@ let ItemsService = class ItemsService {
         const item = await this.itemsRepository.preload(Object.assign({}, items));
         return await this.itemsRepository.save(item);
     }
-    async search(searchConditionsDto) {
-        const { keyword, distance, category, minPrice, maxPrice, rating, delivery, start, end, offset, limit, lat, lng, } = searchConditionsDto;
-        const queryBuilder = this.itemsRepository.createQueryBuilder('item');
-        if (keyword) {
-            queryBuilder.andWhere(new typeorm_2.Brackets((qb) => {
-                qb.where('item.title like :keyword', {
-                    keyword: `%${keyword}%`,
-                }).orWhere('item.description like :keyword', {
-                    keyword: `%${keyword}%`,
-                });
-            }));
-        }
-        if (category) {
-            queryBuilder.andWhere(`item.category = :category`, { category });
-        }
-        if (rating) {
-            queryBuilder.andWhere(`item.rating >= :rating`, { rating });
-        }
-        if (minPrice) {
-            queryBuilder.andWhere(`item.price >= :minPrice`, { minPrice });
-        }
-        if (maxPrice) {
-            queryBuilder.andWhere(`item.price <= :maxPrice`, { maxPrice });
-        }
-        if (delivery || delivery === 0) {
-            if (delivery > 0) {
-                queryBuilder.andWhere(`item.delivery_price > 0`);
-            }
-            else {
-                queryBuilder.andWhere(`item.delivery_price = 0`);
-            }
-        }
-        if (distance) {
-            queryBuilder.select(`(3959 * acos(cos(radians(:lat)) * cos(radians(item.lat)) * 
-   cos(radians(item.lng) - radians(:lng)) + 
-   sin(radians(:lat)) * sin(radians(item.lat )))) as distance`);
-            queryBuilder.having(`distance < :distance`, { lat, lng, distance });
-        }
-        queryBuilder.skip(offset).take(limit);
-        queryBuilder.orderBy({ created: 'DESC' });
-        console.log(queryBuilder);
-        return await queryBuilder.getManyAndCount();
-    }
-    async remove(i_id, u_id) {
-        return this.itemsRepository.delete({ i_id, u_id });
-    }
     async save(items) {
         return await this.itemsRepository.save(items);
     }

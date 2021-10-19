@@ -12,7 +12,6 @@ const api_config_service_1 = require("./api-config.service");
 const aws_s3_service_1 = require("./aws-s3.service");
 const generator_service_1 = require("./generator.service");
 const validator_service_1 = require("./validator.service");
-const email_service_1 = require("./email.service");
 let ServicesModule = class ServicesModule {
 };
 ServicesModule = __decorate([
@@ -20,17 +19,10 @@ ServicesModule = __decorate([
         providers: [
             api_config_service_1.ApiConfigService,
             aws_s3_service_1.AwsS3Service,
-            email_service_1.EmailService,
             generator_service_1.GeneratorService,
             validator_service_1.ValidatorService,
         ],
-        exports: [
-            api_config_service_1.ApiConfigService,
-            aws_s3_service_1.AwsS3Service,
-            email_service_1.EmailService,
-            generator_service_1.GeneratorService,
-            validator_service_1.ValidatorService,
-        ],
+        exports: [api_config_service_1.ApiConfigService, aws_s3_service_1.AwsS3Service, generator_service_1.GeneratorService, validator_service_1.ValidatorService],
     })
 ], ServicesModule);
 exports.ServicesModule = ServicesModule;

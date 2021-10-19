@@ -46,7 +46,7 @@ export class UserController {
   @ApiBody({
     type: UpdateDto,
   })
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @ApiFile({ name: 'avatar' })
   // @UseInterceptors(FileInterceptor('avatar'))
   @Put('update')

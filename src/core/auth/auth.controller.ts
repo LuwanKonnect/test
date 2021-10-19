@@ -21,7 +21,6 @@ import {
 } from '@nestjs/swagger';
 import { IFile } from '../../common/interfaces';
 import { ApiFile } from '../../common/decorators/swagger.schema';
-import { EmailService } from '../../shared';
 import { UtilsProvider } from '../../common/providers';
 
 @ApiTags('Auth')
@@ -30,7 +29,6 @@ export class AuthController {
   constructor(
     private readonly userService: UserService,
     private readonly authService: AuthService,
-    private readonly emailService: EmailService,
   ) {}
 
   @ApiOperation({ summary: 'for user sign up' })
@@ -122,33 +120,6 @@ export class AuthController {
     );
     return new LoginPayloadDto(userEntity.toDto(), token);
   }
-
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Success',
-  })
-  @ApiResponse({
-    status: HttpStatus.INTERNAL_SERVER_ERROR,
-    description: 'Failed, outlook cannot use anymore',
-  })
-  @Get('getVerificationCode')
-  @ApiQuery({
-    name: 'email',
-    description: 'email',
-  })
-  async getVerificationCode(@Query('email') email: string): Promise<void> {
-    const code = UtilsProvider.generateRandomString(6);
-    const emailResult = await this.emailService.mailer(
-      email,
-      `This is your code: ${code}`,
-    );
-    if (emailResult === 200) {
-      await this.authService.save({ email, code });
-    } else {
-      throw new InternalServerErrorException();
-    }
-  }
-
   @ApiResponse({
     status: HttpStatus.CREATED,
     type: LoginPayloadDto,

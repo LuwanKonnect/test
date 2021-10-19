@@ -29,19 +29,13 @@ const swagger_1 = require("@nestjs/swagger");
 const items_service_1 = require("./items.service");
 const items_entity_1 = require("./items.entity");
 const passport_1 = require("@nestjs/passport");
-const user_decorator_1 = require("../../deleted/users/user.decorator");
-const search_conditions_dto_1 = require("./dto/search-conditions.dto");
-const availability_service_1 = require("../availability/availability.service");
-const liked_service_1 = require("../liked/liked.service");
-const dto_1 = require("./dto");
+const decorators_1 = require("../../common/decorators");
 const platform_express_1 = require("@nestjs/platform-express");
 const file_upload_service_1 = require("../../features/file-upload/file-upload.service");
 const update_item_dto_1 = require("./dto/update-item.dto");
 let ItemsController = class ItemsController {
-    constructor(itemsService, availabilityService, likedService, fileUploadService) {
+    constructor(itemsService, fileUploadService) {
         this.itemsService = itemsService;
-        this.availabilityService = availabilityService;
-        this.likedService = likedService;
         this.fileUploadService = fileUploadService;
     }
     save(items, id, files) {
@@ -57,26 +51,6 @@ let ItemsController = class ItemsController {
             return this.itemsService.save(items);
         });
     }
-    findByUid(u_id) {
-        return this.itemsService.findByUid(u_id);
-    }
-    async findSameOwnerItem(sameOwnerDto) {
-        const res = await this.itemsService.findByUidNotIid(sameOwnerDto.u_id, sameOwnerDto.i_id);
-        return res.filter(async (item) => await this.availabilityService.checkAvailability(sameOwnerDto.i_id, sameOwnerDto.year, sameOwnerDto.start, sameOwnerDto.end));
-    }
-    async findByIid(i_id, u_id) {
-        const year = new Date().getFullYear();
-        const availability = await this.availabilityService.findOneByIdAndYear(Number.parseInt(i_id), year);
-        let liked = false;
-        if (u_id) {
-            const LikedResult = await this.likedService.findByUidAndIid(u_id, i_id);
-            if (LikedResult.length === 1) {
-                liked = true;
-            }
-        }
-        const item = await this.itemsService.findOne(Number.parseInt(i_id));
-        return { item, yearAvailability: availability === null || availability === void 0 ? void 0 : availability.availability, liked };
-    }
     async update(items, files) {
         const { deletedImages, newImages } = items, restDto = __rest(items, ["deletedImages", "newImages"]);
         const item = await this.itemsService.findOne(items.i_id);
@@ -91,12 +65,6 @@ let ItemsController = class ItemsController {
         restDto.pictures = originalList.toString();
         return this.itemsService.update(restDto);
     }
-    async delete(u_id, i_id) {
-        return this.itemsService.remove(Number.parseInt(i_id), u_id);
-    }
-    search(searchConditionsDto) {
-        return this.itemsService.search(searchConditionsDto);
-    }
 };
 __decorate([
     swagger_1.ApiResponse({ status: 201, description: 'success' }),
@@ -109,52 +77,12 @@ __decorate([
     common_1.Post('save'),
     common_1.UseInterceptors(platform_express_1.FilesInterceptor('files', 9)),
     __param(0, common_1.Body()),
-    __param(1, user_decorator_1.AuthUser('id')),
+    __param(1, decorators_1.AuthUser('id')),
     __param(2, common_1.UploadedFiles()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [items_entity_1.Items, String, Array]),
     __metadata("design:returntype", Promise)
 ], ItemsController.prototype, "save", null);
-__decorate([
-    common_1.Get('findByUid'),
-    common_1.UseGuards(passport_1.AuthGuard('jwt')),
-    swagger_1.ApiBearerAuth(),
-    swagger_1.ApiResponse({ status: 200, type: [items_entity_1.Items], description: 'success' }),
-    __param(0, user_decorator_1.AuthUser('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", Promise)
-], ItemsController.prototype, "findByUid", null);
-__decorate([
-    common_1.Get('findSameOwnerItem'),
-    common_1.UseGuards(passport_1.AuthGuard('jwt')),
-    swagger_1.ApiBearerAuth(),
-    swagger_1.ApiOperation({
-        summary: 'Get same owner available items created by user',
-    }),
-    swagger_1.ApiResponse({ status: 200, type: [items_entity_1.Items], description: 'success' }),
-    __param(0, common_1.Query()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [dto_1.SameOwnerDto]),
-    __metadata("design:returntype", Promise)
-], ItemsController.prototype, "findSameOwnerItem", null);
-__decorate([
-    common_1.Get('findByIid'),
-    swagger_1.ApiQuery({
-        name: 'i_id',
-        description: 'Items ID',
-    }),
-    swagger_1.ApiQuery({
-        name: 'u_id',
-        description: 'User ID',
-    }),
-    swagger_1.ApiResponse({ status: 200, description: 'success' }),
-    __param(0, common_1.Query('i_id')),
-    __param(1, common_1.Query('u_id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
-    __metadata("design:returntype", Promise)
-], ItemsController.prototype, "findByIid", null);
 __decorate([
     swagger_1.ApiBearerAuth(),
     common_1.UseGuards(passport_1.AuthGuard('jwt')),
@@ -172,42 +100,10 @@ __decorate([
         Array]),
     __metadata("design:returntype", Promise)
 ], ItemsController.prototype, "update", null);
-__decorate([
-    swagger_1.ApiResponse({ status: 203, description: 'Items not exist' }),
-    swagger_1.ApiResponse({ status: 200, description: 'Delete Success' }),
-    common_1.UseGuards(passport_1.AuthGuard('jwt')),
-    swagger_1.ApiQuery({
-        name: 'i_id',
-        description: 'Items ID',
-    }),
-    swagger_1.ApiBearerAuth(),
-    common_1.Delete('delete'),
-    __param(0, user_decorator_1.AuthUser('id')),
-    __param(1, common_1.Query('i_id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
-    __metadata("design:returntype", Promise)
-], ItemsController.prototype, "delete", null);
-__decorate([
-    swagger_1.ApiQuery({
-        name: 'keyword',
-        description: 'User input search keyword',
-        type: search_conditions_dto_1.SearchConditionsDto,
-    }),
-    swagger_1.ApiResponse({ status: 200, type: [items_entity_1.Items], description: 'success' }),
-    swagger_1.ApiOperation({ summary: 'if no search value, return all' }),
-    common_1.Get('search'),
-    __param(0, common_1.Query()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [search_conditions_dto_1.SearchConditionsDto]),
-    __metadata("design:returntype", Promise)
-], ItemsController.prototype, "search", null);
 ItemsController = __decorate([
     swagger_1.ApiTags('Items'),
     common_1.Controller('items'),
     __metadata("design:paramtypes", [items_service_1.ItemsService,
-        availability_service_1.AvailabilityService,
-        liked_service_1.LikedService,
         file_upload_service_1.FileUploadService])
 ], ItemsController);
 exports.ItemsController = ItemsController;

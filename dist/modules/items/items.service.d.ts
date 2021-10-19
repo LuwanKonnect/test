@@ -1,6 +1,5 @@
 import { Items } from './items.entity';
 import { Connection } from 'typeorm';
-import { SearchConditionsDto } from './dto';
 import { CreateItemDto } from './dto/create-item.dto';
 export declare class ItemsService {
     private connection;
@@ -14,7 +13,5 @@ export declare class ItemsService {
         code: number;
         msg: string;
     }>;
-    search(searchConditionsDto: SearchConditionsDto): Promise<Items[]>;
-    remove(i_id: number, u_id: string): Promise<any>;
     save(items: CreateItemDto): Promise<any>;
 }

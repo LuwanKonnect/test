@@ -12,7 +12,6 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./api-config.service"), exports);
 __exportStar(require("./services.module"), exports);
-__exportStar(require("./email.service"), exports);
 __exportStar(require("./aws-s3.service"), exports);
 __exportStar(require("./generator.service"), exports);
 __exportStar(require("./validator.service"), exports);

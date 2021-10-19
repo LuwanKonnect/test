@@ -20,13 +20,10 @@ const dto_1 = require("./dto");
 const constants_1 = require("../../common/constants");
 const swagger_1 = require("@nestjs/swagger");
 const swagger_schema_1 = require("../../common/decorators/swagger.schema");
-const shared_1 = require("../../shared");
-const providers_1 = require("../../common/providers");
 let AuthController = class AuthController {
-    constructor(userService, authService, emailService) {
+    constructor(userService, authService) {
         this.userService = userService;
         this.authService = authService;
-        this.emailService = emailService;
     }
     async signUp(signUpDto, file) {
         console.log(signUpDto);
@@ -45,16 +42,6 @@ let AuthController = class AuthController {
         const userEntity = await this.authService.validateAdmin(signInDto);
         const token = await this.authService.createToken(userEntity, constants_1.AdminRoleEnum.ADMIN);
         return new dto_1.LoginPayloadDto(userEntity.toDto(), token);
-    }
-    async getVerificationCode(email) {
-        const code = providers_1.UtilsProvider.generateRandomString(6);
-        const emailResult = await this.emailService.mailer(email, `This is your code: ${code}`);
-        if (emailResult === 200) {
-            await this.authService.save({ email, code });
-        }
-        else {
-            throw new common_1.InternalServerErrorException();
-        }
     }
     async verifyCode(email, code) {
         return await this.authService.verifyEmailCode(email, code);
@@ -139,25 +126,6 @@ __decorate([
 ], AuthController.prototype, "adminSignIn", null);
 __decorate([
     swagger_1.ApiResponse({
-        status: common_1.HttpStatus.OK,
-        description: 'Success',
-    }),
-    swagger_1.ApiResponse({
-        status: common_1.HttpStatus.INTERNAL_SERVER_ERROR,
-        description: 'Failed, outlook cannot use anymore',
-    }),
-    common_1.Get('getVerificationCode'),
-    swagger_1.ApiQuery({
-        name: 'email',
-        description: 'email',
-    }),
-    __param(0, common_1.Query('email')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", Promise)
-], AuthController.prototype, "getVerificationCode", null);
-__decorate([
-    swagger_1.ApiResponse({
         status: common_1.HttpStatus.CREATED,
         type: dto_1.LoginPayloadDto,
         description: 'Success',
@@ -177,8 +145,7 @@ AuthController = __decorate([
     swagger_1.ApiTags('Auth'),
     common_1.Controller('auth'),
     __metadata("design:paramtypes", [user_service_1.UserService,
-        auth_service_1.AuthService,
-        shared_1.EmailService])
+        auth_service_1.AuthService])
 ], AuthController);
 exports.AuthController = AuthController;
 //# sourceMappingURL=auth.controller.js.map

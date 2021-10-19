@@ -7,6 +7,6 @@ export declare class ItemsController {
     private readonly itemsService;
     private readonly fileUploadService;
     constructor(itemsService: ItemsService, fileUploadService: FileUploadService);
-    save(items: Items, id: string, files: Array<Express.Multer.File>): Promise<any>;
-    update(items: UpdateItemDto, files: Array<Express.Multer.File>): Promise<any>;
+    save(items: Items, id: string, files: Array<Express.Multer.File>): void;
+    update(items: UpdateItemDto, files: Array<Express.Multer.File>): Promise<void>;
 }

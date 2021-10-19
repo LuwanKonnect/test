@@ -58,20 +58,8 @@ export class ItemsController {
     @Body() items: Items,
     @AuthUser('id') id: string,
     @UploadedFiles() files: Array<Express.Multer.File>,
-  ): Promise<any> {
-    items.u_id = id;
-    return Promise.all(
-      files.map(async (file) => {
-        return this.fileUploadService.upload(file, 'items');
-      }),
-    )
-      .then((res) => {
-        items.pictures = res.toString();
-        return items;
-      })
-      .then((res) => {
-        return this.itemsService.save(items);
-      });
+  ) { 
+    console.log(items);
   }
 
   /***
@@ -91,25 +79,7 @@ export class ItemsController {
   async update(
     @Body() items: UpdateItemDto,
     @UploadedFiles() files: Array<Express.Multer.File>,
-  ): Promise<any> {
-    const { deletedImages, newImages, ...restDto } = items;
-    const item = await this.itemsService.findOne(items.i_id);
-    let originalList = item.pictures.split(',');
-    if (deletedImages) {
-      const deletedImageList = deletedImages.split(',');
-      originalList = await this.fileUploadService.updateFileByDelete(
-        deletedImageList,
-        originalList,
-      );
-    }
-    if (files && files.length > 0) {
-      originalList = await this.fileUploadService.updateImageByAdd(
-        files,
-        originalList,
-        'item',
-      );
-    }
-    restDto.pictures = originalList.toString();
-    return this.itemsService.update(restDto);
+  ) {
+    console.log(items);
   }
 }

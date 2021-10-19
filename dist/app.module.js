@@ -9,7 +9,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 require("./boilerplate.polyfill");
 const common_1 = require("@nestjs/common");
-const typeorm_1 = require("@nestjs/typeorm");
 const user_module_1 = require("./core/user/user.module");
 const auth_module_1 = require("./core/auth/auth.module");
 const shared_1 = require("./shared");
@@ -23,11 +22,6 @@ AppModule = __decorate([
         imports: [
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
-            }),
-            typeorm_1.TypeOrmModule.forRootAsync({
-                imports: [shared_1.SharedModule],
-                inject: [shared_1.ApiConfigService],
-                useFactory: (configService) => configService.typeOrmConfigForMysql,
             }),
             user_module_1.UserModule,
             auth_module_1.AuthModule,

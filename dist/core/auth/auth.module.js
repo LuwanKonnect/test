@@ -10,11 +10,7 @@ exports.AuthModule = void 0;
 const common_1 = require("@nestjs/common");
 const auth_service_1 = require("./auth.service");
 const auth_controller_1 = require("./auth.controller");
-const typeorm_1 = require("@nestjs/typeorm");
-const auth_entity_1 = require("./auth.entity");
-const user_entity_1 = require("../user/user.entity");
 const user_module_1 = require("../user/user.module");
-const admin_module_1 = require("../admin/admin.module");
 const passport_1 = require("@nestjs/passport");
 const jwt_1 = require("@nestjs/jwt");
 const jwt_strategy_1 = require("./jwt.strategy");
@@ -24,9 +20,7 @@ let AuthModule = class AuthModule {
 AuthModule = __decorate([
     common_1.Module({
         imports: [
-            typeorm_1.TypeOrmModule.forFeature([user_entity_1.UserEntity, auth_entity_1.AuthEntity]),
             user_module_1.UserModule,
-            admin_module_1.AdminModule,
             passport_1.PassportModule.register({ defaultStrategy: 'jwt' }),
             jwt_1.JwtModule.registerAsync({
                 imports: [shared_1.SharedModule],

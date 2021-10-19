@@ -26,18 +26,12 @@ let JwtStrategy = class JwtStrategy extends passport_1.PassportStrategy(passport
         this.configService = configService;
     }
     async validate(payload) {
-        const user = await this.userService.findEmailById(payload.id);
-        if (user && user.email === payload.email) {
-            return {
-                id: payload.id,
-                email: payload.email,
-                exp: payload.exp,
-                role: payload.role,
-            };
-        }
-        else {
-            throw new common_1.UnauthorizedException();
-        }
+        return {
+            id: payload.id,
+            email: payload.email,
+            exp: payload.exp,
+            role: payload.role,
+        };
     }
 };
 JwtStrategy = __decorate([

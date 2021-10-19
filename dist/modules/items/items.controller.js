@@ -11,17 +11,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var __rest = (this && this.__rest) || function (s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                t[p[i]] = s[p[i]];
-        }
-    return t;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ItemsController = void 0;
 const common_1 = require("@nestjs/common");
@@ -39,31 +28,10 @@ let ItemsController = class ItemsController {
         this.fileUploadService = fileUploadService;
     }
     save(items, id, files) {
-        items.u_id = id;
-        return Promise.all(files.map(async (file) => {
-            return this.fileUploadService.upload(file, 'items');
-        }))
-            .then((res) => {
-            items.pictures = res.toString();
-            return items;
-        })
-            .then((res) => {
-            return this.itemsService.save(items);
-        });
+        console.log(items);
     }
     async update(items, files) {
-        const { deletedImages, newImages } = items, restDto = __rest(items, ["deletedImages", "newImages"]);
-        const item = await this.itemsService.findOne(items.i_id);
-        let originalList = item.pictures.split(',');
-        if (deletedImages) {
-            const deletedImageList = deletedImages.split(',');
-            originalList = await this.fileUploadService.updateFileByDelete(deletedImageList, originalList);
-        }
-        if (files && files.length > 0) {
-            originalList = await this.fileUploadService.updateImageByAdd(files, originalList, 'item');
-        }
-        restDto.pictures = originalList.toString();
-        return this.itemsService.update(restDto);
+        console.log(items);
     }
 };
 __decorate([
@@ -81,7 +49,7 @@ __decorate([
     __param(2, common_1.UploadedFiles()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [items_entity_1.Items, String, Array]),
-    __metadata("design:returntype", Promise)
+    __metadata("design:returntype", void 0)
 ], ItemsController.prototype, "save", null);
 __decorate([
     swagger_1.ApiBearerAuth(),
